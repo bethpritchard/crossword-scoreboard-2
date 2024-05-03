@@ -6,7 +6,11 @@ const NameCard = ({ playerName }: NameCardProps) => {
   return (
     <div>
       <p>0</p>
-      <h2>{playerName}</h2>
+      <div className="flex flex-row">
+        <button>+</button>
+        <h2>{playerName}</h2>
+        <button>-</button>
+      </div>
     </div>
   );
 };
