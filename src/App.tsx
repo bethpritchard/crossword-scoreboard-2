@@ -6,7 +6,7 @@ function App() {
       <div className="w-full">
         <h1 className="text-center">Crossword Scoreboard</h1>
       </div>
-      <div className="flex flex-row  justify-evenly w-full">
+      <div className="w-full flex flex-row justify-evenly">
         <NameCard playerName="Chloe" />
         <NameCard playerName="Beth" />
       </div>

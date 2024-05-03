@@ -4,12 +4,12 @@ export interface NameCardProps {
 
 const NameCard = ({ playerName }: NameCardProps) => {
   return (
-    <div>
+    <div className="flex flex-col grow items-center">
       <p>0</p>
-      <div className="flex flex-row">
-        <button>+</button>
-        <h2>{playerName}</h2>
+      <div className="flex flex-row space-x-10">
         <button>-</button>
+        <h2>{playerName}</h2>
+        <button>+</button>
       </div>
     </div>
   );
