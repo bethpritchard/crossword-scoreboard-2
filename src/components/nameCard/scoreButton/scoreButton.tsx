@@ -1,5 +1,5 @@
-import { PLUS } from "../../constants";
-import { Sign } from "../../types";
+import { PLUS } from "../../../constants";
+import { Sign } from "../../../types";
 
 interface ScoreButtonProps {
   sign: Sign;

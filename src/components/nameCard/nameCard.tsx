@@ -1,6 +1,6 @@
 import { MINUS, PLUS } from "../../constants";
 import { PlayerName } from "../../types";
-import ScoreButton from "./scoreButton";
+import ScoreButton from "./scoreButton/scoreButton";
 
 export interface NameCardProps {
   playerName: PlayerName;
