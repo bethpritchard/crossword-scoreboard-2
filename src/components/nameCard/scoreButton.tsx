@@ -6,7 +6,7 @@ interface ScoreButtonProps {
   onClick: (multiplier: number) => void;
 }
 
-export const ScoreButton = ({ sign, onClick }: ScoreButtonProps) => {
+const ScoreButton = ({ sign, onClick }: ScoreButtonProps) => {
   const handleClick = () => {
     const multiplier = sign === PLUS ? 1 : -1;
     onClick(multiplier);
@@ -14,3 +14,5 @@ export const ScoreButton = ({ sign, onClick }: ScoreButtonProps) => {
 
   return <button onClick={handleClick}>{sign}</button>;
 };
+
+export default ScoreButton;

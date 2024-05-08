@@ -1,10 +1,11 @@
-import { ScoreButton } from "./scoreButton";
 import { MINUS, PLUS } from "../../constants";
+import { PlayerName } from "../../types";
+import ScoreButton from "./scoreButton";
 
 export interface NameCardProps {
-  playerName: string;
+  playerName: PlayerName;
   score: number;
-  updateScore: (playerName: string, score: number) => void;
+  updateScore: (playerName: PlayerName, score: number) => void;
 }
 
 const NameCard = ({ playerName, score, updateScore }: NameCardProps) => {

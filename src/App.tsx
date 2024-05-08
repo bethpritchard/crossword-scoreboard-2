@@ -1,14 +1,12 @@
 import { useState } from "react";
-
-import { BETH_KEY, CHLOE_KEY } from "./constants";
-import { initialScore } from "./types";
-
 import NameCard from "./components/nameCard/nameCard";
+import { InitialScore, CHLOE_KEY, BETH_KEY } from "./constants";
+import { PlayerName } from "./types";
 
 const App = () => {
-  const [scores, setScores] = useState(initialScore);
+  const [scores, setScores] = useState(InitialScore);
 
-  const handleScoreChange = (playerName: string, newScore: number) => {
+  const handleScoreChange = (playerName: PlayerName, newScore: number) => {
     setScores((prevScore) => ({
       ...prevScore,
       [playerName]: newScore,

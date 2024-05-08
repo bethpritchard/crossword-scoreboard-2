@@ -5,9 +5,6 @@ export interface Score {
   [CHLOE_KEY]: number;
 }
 
-export const initialScore: Score = {
-  [BETH_KEY]: 0,
-  [CHLOE_KEY]: 0,
-};
-
 export type Sign = typeof PLUS | typeof MINUS;
+
+export type PlayerName = typeof BETH_KEY | typeof CHLOE_KEY;
