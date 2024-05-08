@@ -12,7 +12,11 @@ const ScoreButton = ({ sign, onClick }: ScoreButtonProps) => {
     onClick(multiplier);
   };
 
-  return <button onClick={handleClick}>{sign}</button>;
+  return (
+    <button name={sign} onClick={handleClick}>
+      {sign}
+    </button>
+  );
 };
 
 export default ScoreButton;
