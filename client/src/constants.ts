@@ -1,10 +1,10 @@
-import { Score } from "./types";
+import { Score } from './types';
 
-export const BETH_KEY = "Beth";
-export const CHLOE_KEY = "Chloe";
+export const BETH_KEY = 'Beth';
+export const CHLOE_KEY = 'Chloe';
 
-export const PLUS = "+";
-export const MINUS = "-";
+export const PLUS = '+';
+export const MINUS = '-';
 
 export const InitialScore: Score = {
   [BETH_KEY]: 0,
