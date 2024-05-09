@@ -11,7 +11,7 @@ on:
       - synchronize
 
 jobs:
-  build-and-publish-frontend:
+  validate-and-test-frontend:
     runs-on: ubuntu-latest
     permissions:
       contents: read
