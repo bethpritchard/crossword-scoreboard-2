@@ -13,6 +13,10 @@ const App = () => {
     }));
   };
 
+  const handleReset = () => {
+    setScores(InitialScore);
+  };
+
   return (
     <div className="h-screen w-screen flex flex-col flex-grow justify-around items-center">
       <div className="w-full">
@@ -31,7 +35,7 @@ const App = () => {
         />
       </div>
       <div>
-        <button> Reset </button>
+        <button onClick={handleReset}>Reset</button>
       </div>
     </div>
   );
