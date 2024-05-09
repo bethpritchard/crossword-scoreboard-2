@@ -7,6 +7,10 @@ const App = () => {
   const [scores, setScores] = useState(InitialScore);
 
   const handleScoreChange = (playerName: PlayerName, newScore: number) => {
+    if (newScore < 0 && scores[playerName] === 0) {
+      return;
+    }
+
     setScores((prevScore) => ({
       ...prevScore,
       [playerName]: newScore,
