@@ -7,10 +7,18 @@ const App = () => {
   const [scores, setScores] = useState(InitialScore);
 
   const handleScoreChange = (playerName: PlayerName, newScore: number) => {
+    if (newScore < 0 && scores[playerName] === 0) {
+      return;
+    }
+
     setScores((prevScore) => ({
       ...prevScore,
       [playerName]: newScore,
     }));
+  };
+
+  const handleReset = () => {
+    setScores(InitialScore);
   };
 
   return (
@@ -31,7 +39,7 @@ const App = () => {
         />
       </div>
       <div>
-        <button> Reset </button>
+        <button onClick={handleReset}>Reset</button>
       </div>
     </div>
   );
