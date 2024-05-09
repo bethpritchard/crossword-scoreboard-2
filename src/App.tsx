@@ -1,17 +1,40 @@
+import { useState } from "react";
 import NameCard from "./components/nameCard/nameCard";
+import { InitialScore, CHLOE_KEY, BETH_KEY } from "./constants";
+import { PlayerName } from "./types";
 
-function App() {
+const App = () => {
+  const [scores, setScores] = useState(InitialScore);
+
+  const handleScoreChange = (playerName: PlayerName, newScore: number) => {
+    setScores((prevScore) => ({
+      ...prevScore,
+      [playerName]: newScore,
+    }));
+  };
+
   return (
-    <div className="h-screen flex flex-col justify-center items-center">
-      <div>
-        <h1>Crossword Scoreboard </h1>
+    <div className="h-screen w-screen flex flex-col flex-grow justify-around items-center">
+      <div className="w-full">
+        <h1 className="text-center">Crossword Scoreboard</h1>
       </div>
-      <div className="flex flex-row">
-        <NameCard playerName="Chloe" />
-        <NameCard playerName="Beth" />
+      <div className="w-full flex flex-row justify-evenly">
+        <NameCard
+          playerName={CHLOE_KEY}
+          score={scores[CHLOE_KEY]}
+          updateScore={handleScoreChange}
+        />
+        <NameCard
+          playerName={BETH_KEY}
+          score={scores[BETH_KEY]}
+          updateScore={handleScoreChange}
+        />
+      </div>
+      <div>
+        <button> Reset </button>
       </div>
     </div>
   );
-}
+};
 
 export default App;
