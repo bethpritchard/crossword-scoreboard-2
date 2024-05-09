@@ -16,6 +16,9 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    defaults:
+      run:
+        working-directory: ./client
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,15 +30,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working-directory: ./ui
 
       - name: Validate
         run: npm run validate
-        working-directory: ./ui
 
       - name: Run tests
         run: npm run test
-        working-directory: ./ui
 
       # # Infrastructure
       # - name: Setup Terraform
