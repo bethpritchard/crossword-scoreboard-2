@@ -1,0 +1,56 @@
+name: Validate, Build, Test and Publish
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build-and-publish-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.1.x"
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./ui
+
+      - name: Validate
+        run: npm run validate
+        working-directory: ./ui
+
+      - name: Run tests
+        run: npm run test
+        working-directory: ./ui
+
+      # # Infrastructure
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v3
+      #   with:
+      #     terraform_version: 1.8.1
+
+      # - name: Terraform Init
+      #   run: terraform init
+      #   working-directory: ./infrastructure
+
+      # - name: Terraform Validate
+      #   run: terraform validate
+      #   working-directory: ./infrastructure
+
+      # - name: Build
+      #   run: npm run build
+      #   working-directory: ./ui
