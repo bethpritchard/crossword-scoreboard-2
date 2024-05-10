@@ -11,7 +11,33 @@ on:
       - synchronize
 
 jobs:
+  inspect-changes:
+    name: Inspect Changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    outputs:
+      is-client: ${{ steps.changes.outputs.is-client }}
+      is-infrastructure: ${{ steps.changes.outputs.is-infrastructure }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Inspect Changes
+        id: ichanges
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            is-client: 
+              - 'client/**'
+            is-infrastructure: 
+              - 'infrastructure/**'
+
   build-and-test-frontend:
+    name: Build and Test Frontend
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -46,6 +72,7 @@ jobs:
           CI: true
 
       - name: Upload production-ready build files
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
           name: production-files
