@@ -89,12 +89,12 @@ jobs:
     steps:
       - name: Validate and format client infra
         if: needs.inspect-changes.outputs.is-client-infra == 'true'
-        uses: ./.github/actions/validate-and-format-terraform.yml
+        uses: ./.github/workflows/validate-terraform.yml
         with:
           working-directory: ./infrastructure/client
 
       - name: Validate and format server infra
         if: needs.inspect-changes.outputs.is-server-infra == 'true'
-        uses: ./.github/actions/validate-and-format-terraform.yml
+        uses: ./.github/worflows/validate-terraform.yml
         with:
           working-directory: ./infrastructure/server
