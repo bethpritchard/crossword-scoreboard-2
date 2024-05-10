@@ -2,13 +2,20 @@ name: Validate Terraform
 
 on:
   workflow_call:
+    inputs:
+      path:
+        required: true
+        description: "The path to the Terraform configuration files"
+        type: string
 
 jobs:
   validate-and-format-infrastructure:
     name: Validate and Format Infrastructure
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    defaults:
+      run:
+        working-directory: ${{inputs.path }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4

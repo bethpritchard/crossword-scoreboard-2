@@ -79,25 +79,18 @@ jobs:
           name: production-files
           path: ./client/dist
 
-  validate-and-format-infrastructure:
-    name: Validate and Format Infrastructure
+  validate-and-format-client-infra:
+    name: Validate and Format Client Infrastructure
     needs: inspect-changes
-    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client-infra == 'true' || needs.inspect-changes.outputs.is-server-infra == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client-infra == 'true'
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      path: ./infrastructure/client
 
-      - name: Validate and format client infra
-        if: needs.inspect-changes.outputs.is-client-infra == 'true'
-        uses: ./.github/workflows/validate-terraform.yml
-        with:
-          working-directory: ./infrastructure/client
-
-      - name: Validate and format server infra
-        if: needs.inspect-changes.outputs.is-server-infra == 'true'
-        uses: ./.github/worflows/validate-terraform.yml
-        with:
-          working-directory: ./infrastructure/server
+  validate-and-format-server-infra:
+    name: Validate and Format Server Infrastructure
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-server-infra == 'true'
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      path: ./infrastructure/server
