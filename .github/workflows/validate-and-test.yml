@@ -45,19 +45,11 @@ jobs:
         env:
           CI: true
 
-      - name: Copy production artifacts
-
-        run: cp -r . ../production
-
-      - name: Remove dev dependencies
-        run: npm prune --omit-dev
-        working-directory: ./production
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v2
         with:
-          name: client
-          path: ./production
+          name: production-files
+          path: ./client/dist
 
       # # Infrastructure
       # - name: Setup Terraform
