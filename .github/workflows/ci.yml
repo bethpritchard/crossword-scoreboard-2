@@ -87,6 +87,9 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Validate and format client infra
         if: needs.inspect-changes.outputs.is-client-infra == 'true'
         uses: ./.github/workflows/validate-terraform.yml
