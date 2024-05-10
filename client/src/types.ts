@@ -1,4 +1,4 @@
-import { BETH_KEY, CHLOE_KEY, PLUS, MINUS } from "./constants";
+import { BETH_KEY, CHLOE_KEY, PLUS, MINUS } from './constants';
 
 export interface Score {
   [BETH_KEY]: number;

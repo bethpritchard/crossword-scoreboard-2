@@ -1,7 +1,7 @@
-import { useState } from "react";
-import NameCard from "./components/nameCard/nameCard";
-import { InitialScore, CHLOE_KEY, BETH_KEY } from "./constants";
-import { PlayerName } from "./types";
+import { useState } from 'react';
+import NameCard from './components/nameCard/nameCard';
+import { InitialScore, CHLOE_KEY, BETH_KEY } from './constants';
+import { PlayerName } from './types';
 
 const App = () => {
   const [scores, setScores] = useState(InitialScore);

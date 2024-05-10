@@ -1,0 +1,97 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  inspect-changes:
+    name: Inspect Changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      is-client: ${{ steps.changes.outputs.is-client }}
+      is-client-infra: ${{ steps.changes.outputs.is-client-infra }}
+      is-server-infra: ${{ steps.changes.outputs.is-server-infra }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inspect Changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            is-client: 
+              - 'client/**'
+            is-client-infra: 
+              - 'infrastructure/client/*'
+            is-server-infra: 
+              - 'infrastructure/server/*'
+
+  build-and-test-frontend:
+    name: Build and Test Frontend
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.1.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prettier
+        run: npm run prettier
+
+      - name: Build
+        run: npm run build
+
+      - name: Run tests
+        run: npm run test
+        env:
+          CI: true
+
+      - name: Upload production-ready build files
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-files
+          path: ./client/dist
+
+  validate-and-format-client-infra:
+    name: Validate and Format Client Infrastructure
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client-infra == 'true'
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      path: ./infrastructure/client
+
+  validate-and-format-server-infra:
+    name: Validate and Format Server Infrastructure
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-server-infra == 'true'
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      path: ./infrastructure/server
