@@ -26,9 +26,10 @@ jobs:
           terraform_version: 1.8.1
 
       - name: Terraform Init
-        run: |
-          terraform init --backend=false
-          terraform fmt -check
+        run: terraform init --backend=false
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
 
       - name: Terraform Validate
         run: terraform validate
