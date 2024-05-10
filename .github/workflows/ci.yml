@@ -19,7 +19,8 @@ jobs:
       pull-requests: read
     outputs:
       is-client: ${{ steps.changes.outputs.is-client }}
-      is-infrastructure: ${{ steps.changes.outputs.is-infrastructure }}
+      is-client-infra: ${{ steps.changes.outputs.is-client-infra }}
+      is-server-infra: ${{ steps.changes.outputs.is-server-infra }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,8 +31,10 @@ jobs:
           filters: |
             is-client: 
               - 'client/**'
-            is-infrastructure: 
-              - 'infrastructure/**'
+            is-client-infra: 
+              - 'infrastructure/client/*'
+            is-server-infra: 
+              - 'infrastructure/server/*'
 
   build-and-test-frontend:
     name: Build and Test Frontend
@@ -40,7 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
     defaults:
       run:
         working-directory: ./client
@@ -77,20 +79,22 @@ jobs:
           name: production-files
           path: ./client/dist
 
-      # # Infrastructure
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v3
-      #   with:
-      #     terraform_version: 1.8.1
+  validate-and-format-infrastructure:
+    name: Validate and Format Infrastructure
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client-infra == 'true' || needs.inspect-changes.outputs.is-server-infra == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Validate and format client infra
+        if: needs.inspect-changes.outputs.is-client-infra == 'true'
+        uses: ./.github/actions/validate-and-format-terraform.yml
+        with:
+          working-directory: ./infrastructure/client
 
-      # - name: Terraform Init
-      #   run: terraform init
-      #   working-directory: ./infrastructure
-
-      # - name: Terraform Validate
-      #   run: terraform validate
-      #   working-directory: ./infrastructure
-
-      # - name: Build
-      #   run: npm run build
-      #   working-directory: ./ui
+      - name: Validate and format server infra
+        if: needs.inspect-changes.outputs.is-server-infra == 'true'
+        uses: ./.github/actions/validate-and-format-terraform.yml
+        with:
+          working-directory: ./infrastructure/server
