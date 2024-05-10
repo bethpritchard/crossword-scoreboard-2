@@ -24,6 +24,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Inspect Changes
         id: changes
         uses: dorny/paths-filter@v3
