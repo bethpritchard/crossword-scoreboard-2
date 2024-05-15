@@ -2,6 +2,7 @@ import { useState } from 'react';
 import NameCard from './components/nameCard/nameCard';
 import { InitialScore, CHLOE_KEY, BETH_KEY } from './constants';
 import { PlayerName } from './types';
+import { updateScore } from './api/updateScore';
 
 const App = () => {
   const [scores, setScores] = useState(InitialScore);
@@ -15,6 +16,7 @@ const App = () => {
       ...prevScore,
       [playerName]: newScore,
     }));
+    updateScore(scores);
   };
 
   const handleReset = () => {
