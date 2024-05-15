@@ -1,0 +1,1 @@
+https://www.katk.dev/aws-lambda-in-type-script-with-terraform
