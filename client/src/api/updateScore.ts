@@ -1,7 +1,7 @@
 import { Score } from '@/types';
 import axios from 'axios';
 
-const URL = 'https://55u3xi0fv6.execute-api.eu-west-2.amazonaws.com/test/test';
+const URL = 'https://hj7vuxsb0b.execute-api.eu-west-2.amazonaws.com/test';
 
 const CONFIG = {
   headers: {
