@@ -5,6 +5,6 @@ module "update_score_lambda" {
   runtime       = "python3.12"
   handler       = "main.lambda_handler"
   source_path   = "${local.lambda_source_path}/update-score"
-  artifacts_dir = "${local.lambda_source_path}/update-score/dist"
+  artifacts_dir = local.artifacts_path
 }
 

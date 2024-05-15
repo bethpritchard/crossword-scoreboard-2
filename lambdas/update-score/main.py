@@ -2,4 +2,4 @@ import boto3
 
 
 def lambda_handler(event, context):
-    return {"statusCode": 200, "body": result}
+    return {"statusCode": 200, "body": "Success"}
