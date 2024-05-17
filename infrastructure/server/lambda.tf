@@ -60,3 +60,32 @@ resource "aws_lambda_permission" "update_score_lambda_permission" {
   function_name = aws_lambda_function.update_score_lambda.arn
   principal     = "apigateway.amazonaws.com"
 }
+
+data "aws_iam_policy_document" "update_score_lambda" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = [
+      "arn:aws:logs:*:*:*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "update_score_lambda_logging" {
+  name   = "update-score-lambda-logging"
+  policy = data.aws_iam_policy_document.update_score_lambda.json
+}
+
+resource "aws_iam_role_policy_attachment" "update_score_lambda_logging" {
+  role       = aws_iam_role.update_score_lambda_role.name
+  policy_arn = aws_iam_policy.update_score_lambda_logging.arn
+}
+
+resource "aws_cloudwatch_log_group" "update_score_lambda_log_group" {
+  name              = "/aws/lambda/update-score-lambda"
+  retention_in_days = 14
+}
