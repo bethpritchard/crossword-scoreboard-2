@@ -1,4 +1,4 @@
 output "api_url" {
-  description = "Test API URL"
-  value       = "${aws_api_gateway_deployment.test.invoke_url}/${aws_api_gateway_resource.test.path_part}"
+  description = "Update API URL"
+  value       = "${aws_api_gateway_deployment.update.invoke_url}/${aws_api_gateway_resource.update.path_part}"
 }
