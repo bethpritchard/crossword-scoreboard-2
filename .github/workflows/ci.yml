@@ -21,6 +21,7 @@ jobs:
       is-client: ${{ steps.changes.outputs.is-client }}
       is-client-infra: ${{ steps.changes.outputs.is-client-infra }}
       is-server-infra: ${{ steps.changes.outputs.is-server-infra }}
+      is-lambda: ${{ steps.changes.outputs.is-lambda }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +37,8 @@ jobs:
               - 'infrastructure/client/*'
             is-server-infra: 
               - 'infrastructure/server/*'
+            is-lambda:
+              - 'lambdas/**'
 
   build-and-test-frontend:
     name: Build and Test Frontend
@@ -95,3 +98,15 @@ jobs:
     uses: ./.github/workflows/validate-terraform.yml
     with:
       path: ./infrastructure/server
+
+  validate-and-format-lambdas:
+    name: Validate and Format Lambdas
+    needs: inspect-changes
+    if: github.event_name == 'push' || needs.inspect-changes.outputs.is-lambda == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Black
+        uses: psf/black@stable
