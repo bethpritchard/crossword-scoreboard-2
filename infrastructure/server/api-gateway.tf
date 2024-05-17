@@ -55,11 +55,7 @@ resource "aws_api_gateway_integration_response" "update_post" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   resource_id = aws_api_gateway_resource.update.id
   http_method = aws_api_gateway_method.update_post.http_method
-  status_code = "200"
-
-  response_templates = {
-    "application/json" = "Success!"
-  }
+  status_code = aws_api_gateway_method_response.update_post.status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"

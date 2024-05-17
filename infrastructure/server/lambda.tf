@@ -61,17 +61,21 @@ resource "aws_lambda_permission" "update_score_lambda_permission" {
   principal     = "apigateway.amazonaws.com"
 }
 
+resource "aws_cloudwatch_log_group" "update_score_lambda" {
+  name              = "/aws/lambda/${aws_lambda_function.update_score_lambda.function_name}"
+  retention_in_days = 14
+}
+
 data "aws_iam_policy_document" "update_score_lambda" {
   statement {
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
 
     resources = [
-      aws_cloudwatch_log_group.update_score_lambda_log_group.arn,
-      "${aws_cloudwatch_log_group.update_score_lambda_log_group.arn}:*"
+      aws_cloudwatch_log_group.update_score_lambda.arn,
+      "${aws_cloudwatch_log_group.update_score_lambda.arn}:*"
     ]
   }
 }

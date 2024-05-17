@@ -16,7 +16,7 @@ const App = () => {
       ...prevScore,
       [playerName]: newScore,
     }));
-    updateScore(scores);
+    updateScore({ playerName: playerName, score: newScore });
   };
 
   const handleReset = () => {
