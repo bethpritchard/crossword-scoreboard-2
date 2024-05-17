@@ -103,6 +103,10 @@ jobs:
     name: Validate and Format Lambdas
     needs: inspect-changes
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-lambda == 'true'
-    uses: psf/black@stable
-    with:
-      path: ./lambdas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Black
+        uses: psf/black@stable
