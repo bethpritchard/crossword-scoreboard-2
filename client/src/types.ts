@@ -8,3 +8,8 @@ export interface Score {
 export type Sign = typeof PLUS | typeof MINUS;
 
 export type PlayerName = typeof BETH_KEY | typeof CHLOE_KEY;
+
+export interface PlayerScore {
+  playerName: PlayerName;
+  score: number;
+}

@@ -1,4 +1,4 @@
-import { Score } from '@/types';
+import { PlayerScore } from '@/types';
 import axios from 'axios';
 
 const URL = 'https://hj7vuxsb0b.execute-api.eu-west-2.amazonaws.com/v1/update';
@@ -9,9 +9,9 @@ const CONFIG = {
   },
 };
 
-export const updateScore = async (score: Score) => {
+export const updateScore = async (playerScore: PlayerScore) => {
   axios
-    .post(`${URL}`, JSON.stringify(score), CONFIG)
+    .post(`${URL}`, JSON.stringify(playerScore), CONFIG)
     .then((response) => {
       console.log(response);
     })

@@ -28,7 +28,7 @@ resource "aws_iam_policy" "update_score_lambda_policy" {
           "dynamodb:PutItem",
           "dynamodb:UpdateItem"
         ],
-        Resource = "*"
+        Resource = aws_dynamodb_table.main.arn
       }
     ]
   })
@@ -61,16 +61,21 @@ resource "aws_lambda_permission" "update_score_lambda_permission" {
   principal     = "apigateway.amazonaws.com"
 }
 
+resource "aws_cloudwatch_log_group" "update_score_lambda" {
+  name              = "/aws/lambda/${aws_lambda_function.update_score_lambda.function_name}"
+  retention_in_days = 14
+}
+
 data "aws_iam_policy_document" "update_score_lambda" {
   statement {
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
 
     resources = [
-      "arn:aws:logs:*:*:*"
+      aws_cloudwatch_log_group.update_score_lambda.arn,
+      "${aws_cloudwatch_log_group.update_score_lambda.arn}:*"
     ]
   }
 }
@@ -83,9 +88,4 @@ resource "aws_iam_policy" "update_score_lambda_logging" {
 resource "aws_iam_role_policy_attachment" "update_score_lambda_logging" {
   role       = aws_iam_role.update_score_lambda_role.name
   policy_arn = aws_iam_policy.update_score_lambda_logging.arn
-}
-
-resource "aws_cloudwatch_log_group" "update_score_lambda_log_group" {
-  name              = "/aws/lambda/update-score-lambda"
-  retention_in_days = 14
 }
