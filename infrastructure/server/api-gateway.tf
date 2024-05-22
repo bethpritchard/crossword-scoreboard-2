@@ -85,7 +85,7 @@ resource "aws_api_gateway_integration" "get" {
   http_method             = aws_api_gateway_method.get.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.update_score_lambda.invoke_arn
+  uri                     = aws_lambda_function.get_score_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_method_response" "get" {
