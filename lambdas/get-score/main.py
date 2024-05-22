@@ -1,19 +1,21 @@
+import json
 import boto3
 
-dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table("crossword-scoreboard-db")  # Give this to the lambda
+client = boto3.client("dynamodb")
 
 
 def lambda_handler(event, context):
 
     try:
+        response = client.batch_get_item(
+            RequestItems={
+                "crossword-scoreboard-db": {
+                    "Keys": [{"name": {"S": "Beth"}}, {"name": {"S": "Chloe"}}]
+                }
+            }
+        )["Responses"]["crossword-scoreboard-db"]
 
-        table.update_item(
-            Key={"name": event["playerName"]},
-            UpdateExpression="set score = :s",
-            ExpressionAttributeValues={":s": event["score"]},
-            ReturnValues="UPDATED_NEW",
-        )
+        scores = {item["name"]["S"]: item["score"]["N"] for item in response}
 
     except Exception as e:
         return {
@@ -31,5 +33,5 @@ def lambda_handler(event, context):
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
         },
-        "body": "Table updated successfully.",
+        "body": json.dumps(scores),
     }
