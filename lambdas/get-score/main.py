@@ -15,7 +15,7 @@ def lambda_handler(event, context):
             }
         )["Responses"]["crossword-scoreboard-db"]
 
-        scores = {item["name"]["S"]: item["score"]["N"] for item in response}
+        scores = {item["name"]["S"]: int(item["score"]["N"]) for item in response}
 
     except Exception as e:
         return {
