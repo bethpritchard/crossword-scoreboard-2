@@ -14,7 +14,6 @@ resource "aws_api_gateway_resource" "db" {
 
 // POST method
 
-
 resource "aws_api_gateway_method" "post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
@@ -22,10 +21,8 @@ resource "aws_api_gateway_method" "post" {
   authorization = "NONE"
 
   request_parameters = {
-    "method.request.header.Content-Type"                 = true
-    "method.request.header.Access-Control-Allow-Headers" = true
+    "method.request.header.Content-Type" = true
   }
-
 }
 
 resource "aws_api_gateway_integration" "post" {
@@ -34,8 +31,7 @@ resource "aws_api_gateway_integration" "post" {
   http_method             = aws_api_gateway_method.post.http_method
   integration_http_method = "POST"
   type                    = "AWS"
-
-  uri = aws_lambda_function.update_score_lambda.invoke_arn
+  uri                     = module.update_score_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_method_response" "post" {
@@ -48,7 +44,7 @@ resource "aws_api_gateway_method_response" "post" {
     "method.response.header.Content-Type"                 = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = false
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
 
@@ -85,7 +81,7 @@ resource "aws_api_gateway_integration" "get" {
   http_method             = aws_api_gateway_method.get.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.get_score_lambda.invoke_arn
+  uri                     = module.get_score_lambda.invoke_arn
 }
 
 resource "aws_api_gateway_method_response" "get" {
@@ -98,7 +94,7 @@ resource "aws_api_gateway_method_response" "get" {
     "method.response.header.Content-Type"                 = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = false
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
 
@@ -156,7 +152,7 @@ resource "aws_api_gateway_integration_response" "options" {
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST,PUT,GET'"
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST,GET'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 }
