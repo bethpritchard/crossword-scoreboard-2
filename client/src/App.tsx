@@ -23,6 +23,9 @@ const App = () => {
 
   const handleReset = () => {
     setScores(InitialScore);
+    for (const playerName in InitialScore) {
+      updateScore(playerName as PlayerName, 0);
+    }
   };
 
   useEffect(() => {
