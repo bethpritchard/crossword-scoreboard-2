@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NameCard from './components/nameCard/nameCard';
+import { updateScore } from './api/updateScore';
+import { getScores } from './api/getScores';
 import { InitialScore, CHLOE_KEY, BETH_KEY } from './constants';
 import { PlayerName } from './types';
-import { updateScore } from './api/updateScore';
 
 const App = () => {
   const [scores, setScores] = useState(InitialScore);
@@ -16,12 +17,24 @@ const App = () => {
       ...prevScore,
       [playerName]: newScore,
     }));
-    updateScore({ playerName: playerName, score: newScore });
+
+    updateScore(playerName, newScore);
   };
 
   const handleReset = () => {
     setScores(InitialScore);
+    for (const playerName in InitialScore) {
+      updateScore(playerName as PlayerName, 0);
+    }
   };
+
+  useEffect(() => {
+    const fetchScores = async () => {
+      const scoreData = await getScores();
+      setScores(scoreData);
+    };
+    fetchScores();
+  }, []);
 
   return (
     <div className="h-screen w-screen flex flex-col flex-grow justify-around items-center">

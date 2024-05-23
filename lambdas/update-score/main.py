@@ -9,7 +9,7 @@ def lambda_handler(event, context):
         table.update_item(
             Key={"name": event["playerName"]},
             UpdateExpression="set score = :s",
-            ExpressionAttributeValues={":s": event["score"]},
+            ExpressionAttributeValues={":s": int(event["score"])},
             ReturnValues="UPDATED_NEW",
         )
         return {
