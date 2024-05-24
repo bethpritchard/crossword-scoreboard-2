@@ -1,3 +1,5 @@
+
+
 resource "aws_api_gateway_rest_api" "main" {
   name        = "scoreboard-rest-api"
   description = "API Gateway"
@@ -12,13 +14,25 @@ resource "aws_api_gateway_resource" "db" {
   path_part   = "db"
 }
 
+locals {
+  authorization_type = "COGNITO_USER_POOLS"
+}
+
+resource "aws_api_gateway_authorizer" "main" {
+  name          = "CognitoUserPoolAuthorizer"
+  type          = local.authorization_type
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  provider_arns = [aws_cognito_user_pool.main.arn]
+}
+
 // POST method
 
 resource "aws_api_gateway_method" "post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = local.authorization_type
+  authorizer_id = aws_api_gateway_authorizer.main.id
 
   request_parameters = {
     "method.request.header.Content-Type" = true
@@ -68,7 +82,8 @@ resource "aws_api_gateway_method" "get" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = local.authorization_type
+  authorizer_id = aws_api_gateway_authorizer.main.id
 
   request_parameters = {
     "method.request.header.Content-Type" = true
@@ -118,7 +133,8 @@ resource "aws_api_gateway_method" "options" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
   http_method   = "OPTIONS"
-  authorization = "NONE"
+  authorization = local.authorization_type
+  authorizer_id = aws_api_gateway_authorizer.main.id
 }
 
 resource "aws_api_gateway_integration" "options" {
