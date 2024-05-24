@@ -183,5 +183,25 @@ resource "aws_api_gateway_deployment" "db" {
     redeployment = sha1(jsonencode(aws_api_gateway_rest_api.main.body))
   }
   rest_api_id = aws_api_gateway_rest_api.main.id
-  stage_name  = "v1"
+}
+
+resource "aws_api_gateway_stage" "main" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  stage_name    = "v2"
+  deployment_id = aws_api_gateway_deployment.db.id
+  description   = "v2"
+}
+
+resource "aws_api_gateway_usage_plan" "main" {
+  name = "${local.project}-usage-plan"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.main.id
+    stage  = aws_api_gateway_stage.main.stage_name
+  }
+
+  quota_settings {
+    limit  = 1000
+    period = "DAY"
+  }
 }
