@@ -5,8 +5,14 @@ import { getScores } from '@/api/getScores';
 import { updateScore } from '@/api/updateScore';
 import { InitialScore, CHLOE_KEY, BETH_KEY } from '@/constants';
 import { PlayerName } from '@/types';
+import { useAuth } from '@/hooks/useAuth';
 
 const Home = () => {
+  const auth = useAuth();
+  if (auth.isLoading) {
+    return <div>Loading...</div>;
+  }
+
   const [scores, setScores] = useState(InitialScore);
 
   const handleScoreChange = (playerName: PlayerName, newScore: number) => {
@@ -56,6 +62,10 @@ const Home = () => {
       </div>
       <div className="flex justify-center mb-4">
         <button onClick={handleReset}>Reset</button>
+      </div>
+
+      <div className="flex justify-center">
+        <button onClick={() => auth.handleSignOut()}>Sign Out</button>
       </div>
     </div>
   );

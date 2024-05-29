@@ -1,13 +1,20 @@
-interface SignInProps {
-  onSignIn: (username: string, password: string) => void;
-}
+import { useAuth } from '@/hooks/useAuth';
+import { useState } from 'react';
 
-const SignIn = ({ onSignIn }: SignInProps) => {
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    const username = (event.target as HTMLFormElement).elements.username.value;
-    const password = (event.target as HTMLFormElement).elements.password.value;
-    onSignIn(username, password);
+const SignIn = () => {
+  const auth = useAuth();
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const result = await auth.handleSignIn(username, password);
+    if (!result.success) {
+      setError(result.message);
+    }
   };
 
   return (
@@ -15,10 +22,22 @@ const SignIn = ({ onSignIn }: SignInProps) => {
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <label>Username</label>
-        <input type="text" name="username" />
+        <input
+          type="text"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
         <label>Password</label>
-        <input type="password" name="password" />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
         <button type="submit">Login</button>
+        {error && <p>{error}</p>}
       </form>
     </div>
   );
