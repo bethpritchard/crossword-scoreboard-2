@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from './App';
+import Home from '@/pages/home';
 
-describe('App', async () => {
+describe('Home', async () => {
   it('renders without crashing', async () => {
-    render(<App />);
+    render(<Home />);
     const h1 = screen.queryByText('Crossword Scoreboard');
     expect(h1).not.toBeNull();
   });
@@ -17,19 +17,19 @@ describe('NameCard', async () => {
   });
 
   it('Renders name cards', async () => {
-    render(<App />);
+    render(<Home />);
     const h2 = screen.queryByText('Chloe');
     expect(h2).not.toBeNull();
   });
 
   it('Renders score', async () => {
-    render(<App />);
+    render(<Home />);
     const score = screen.queryAllByText('0')[0];
     expect(score).not.toBeNull();
   });
 
   it('It increments and decrements score', async () => {
-    render(<App />);
+    render(<Home />);
 
     const plusButton = screen.getAllByRole('button', { name: '+' })[0];
     userEvent.click(plusButton);
@@ -46,7 +46,7 @@ describe('NameCard', async () => {
   });
 
   it('Does not decrement score below 0', async () => {
-    render(<App />);
+    render(<Home />);
     const minusButton = screen.getAllByRole('button', { name: '-' })[0];
     userEvent.click(minusButton);
 
@@ -57,7 +57,7 @@ describe('NameCard', async () => {
   });
 
   it('Resets score', async () => {
-    render(<App />);
+    render(<Home />);
     userEvent.click(screen.getAllByRole('button', { name: '+' })[0]);
     userEvent.click(screen.getAllByRole('button', { name: '+' })[1]);
 
