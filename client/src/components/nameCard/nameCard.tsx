@@ -12,7 +12,7 @@ const NameCard = ({ playerName, score, updateScore }: NameCardProps) => {
   };
   return (
     <div className="flex flex-col items-center">
-      <p>{score}</p>
+      <h3>{score}</h3>
       <div className="flex flex-row space-x-10">
         <ScoreButton sign={MINUS} onClick={handleIncrement} />
         <h2>{playerName}</h2>

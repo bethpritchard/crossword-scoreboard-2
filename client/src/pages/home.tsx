@@ -44,11 +44,11 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="h-full flex flex-col justify-evenly items-center">
-      <div className="">
-        <h1 className="">Crossword Scoreboard</h1>
+    <div className="h-full flex flex-col justify-evenly items-center p-4">
+      <div className="w-full mb-4">
+        <h1 className="text-center">Crossword Scoreboard</h1>
       </div>
-      <div className="flex justify-evenly w-full">
+      <div className="flex flex-col md:flex-row justify-evenly w-full space-y-4 md:space-y-0 md:space-x-4">
         <NameCard
           playerName={CHLOE_KEY}
           score={scores[CHLOE_KEY]}
@@ -60,10 +60,9 @@ const Home = () => {
           updateScore={handleScoreChange}
         />
       </div>
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mt-4 md:mt-8 mb-4">
         <button onClick={handleReset}>Reset</button>
       </div>
-
       <div className="flex justify-center">
         <button onClick={() => auth.handleSignOut()}>Sign Out</button>
       </div>
