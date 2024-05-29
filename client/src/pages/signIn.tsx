@@ -18,26 +18,46 @@ const SignIn = () => {
   };
 
   return (
-    <div className="login">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Username</label>
-        <input
-          type="text"
-          name="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button type="submit">Login</button>
-        {error && <p>{error}</p>}
+    <div className="h-full flex flex-col justify-evenly items-center">
+      <form className="" onSubmit={handleSubmit}>
+        <div className="md:flex md:flex-col md:items-center mb-6">
+          <h1>Sign In</h1>
+          {error && <p>{error}</p>}
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <div className="md:w-1/3">
+            <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+              Username
+            </label>
+          </div>
+          <div className="md:w-2/3">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <div className="md:w-1/3">
+            <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+              Password
+            </label>
+          </div>
+          <div className="md:w-2/3">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="md:flex md:items-center">
+          <div className="md:w-1/3"></div>
+          <div className="md:w-2/3">
+            <button type="submit">Sign In</button>
+          </div>
+        </div>
       </form>
     </div>
   );
