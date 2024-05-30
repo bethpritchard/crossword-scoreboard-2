@@ -1,5 +1,5 @@
+import { API_URL } from '@/api/constants';
 import axios from 'axios';
-import { API_URL } from './constants';
 
 export const getScores = async (authToken: string) => {
   const HEADERS = {
@@ -7,6 +7,8 @@ export const getScores = async (authToken: string) => {
     Authorization: `Bearer ${authToken}`,
   };
 
-  const response = await axios.get(API_URL, { headers: HEADERS });
+  const response = await axios.get(API_URL, {
+    headers: HEADERS,
+  });
   return response.data;
 };

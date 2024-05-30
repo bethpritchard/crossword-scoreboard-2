@@ -1,2 +1,1 @@
-export const API_URL =
-  'https://wqij17j4y0.execute-api.eu-west-2.amazonaws.com/v2/db';
+export const API_URL = import.meta.env.VITE_API_URL as string;
