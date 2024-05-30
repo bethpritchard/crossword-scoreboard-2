@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "main" {
-  bucket = "${local.project}-frontend"
+  bucket = "${local.prefix}-frontend"
 }
 
 resource "aws_s3_account_public_access_block" "main" {

@@ -5,7 +5,7 @@ resource "aws_cloudfront_distribution" "main" {
 
   origin {
     domain_name              = aws_s3_bucket.main.bucket_regional_domain_name
-    origin_id                = "my-s3-origin"
+    origin_id                = "${var.environment}-s3-origin"
     origin_access_control_id = aws_cloudfront_origin_access_control.main.id
   }
 
@@ -17,7 +17,7 @@ resource "aws_cloudfront_distribution" "main" {
 
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "my-s3-origin"
+    target_origin_id = "${var.environment}-s3-origin"
 
     forwarded_values {
       query_string = false
@@ -40,13 +40,8 @@ resource "aws_cloudfront_distribution" "main" {
 }
 
 resource "aws_cloudfront_origin_access_control" "main" {
-  name                              = "cloudfront OAC"
-  description                       = "description of OAC"
+  name                              = "${local.prefix}-cloudfront-oac"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
-}
-
-output "cloudfront_url" {
-  value = aws_cloudfront_distribution.main.domain_name
 }
