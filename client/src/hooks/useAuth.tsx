@@ -3,7 +3,12 @@
 import { CognitoConfig } from '@/config/auth';
 import { Amplify } from 'aws-amplify';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { signIn, getCurrentUser, signOut } from 'aws-amplify/auth';
+import {
+  signIn,
+  getCurrentUser,
+  signOut,
+  fetchAuthSession,
+} from 'aws-amplify/auth';
 
 Amplify.configure(CognitoConfig);
 
@@ -16,6 +21,7 @@ interface UseAuth {
     password: string,
   ) => Promise<{ success: boolean; message: string }>;
   handleSignOut: () => Promise<{ success: boolean; message: string }>;
+  getAuthToken: () => Promise<string>;
 }
 
 type Props = {
@@ -81,11 +87,18 @@ const useProvideAuth = (): UseAuth => {
     }
   };
 
+  const getAuthToken = async () => {
+    const session = await fetchAuthSession();
+    const jwtToken = session.tokens?.idToken;
+    return jwtToken?.toString() || '';
+  };
+
   return {
     isLoading,
     isAuthenticated,
     username,
     handleSignIn,
     handleSignOut,
+    getAuthToken,
   };
 };

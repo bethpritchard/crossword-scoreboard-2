@@ -58,7 +58,7 @@ resource "aws_api_gateway_method_response" "post" {
     "method.response.header.Content-Type"                 = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Origin"  = false
   }
 }
 
@@ -70,7 +70,7 @@ resource "aws_api_gateway_integration_response" "post" {
   status_code = aws_api_gateway_method_response.post.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -86,7 +86,8 @@ resource "aws_api_gateway_method" "get" {
   authorizer_id = aws_api_gateway_authorizer.main.id
 
   request_parameters = {
-    "method.request.header.Content-Type" = true
+    "method.request.header.Content-Type"  = true
+    "method.request.header.Authorization" = true
   }
 }
 
@@ -109,7 +110,7 @@ resource "aws_api_gateway_method_response" "get" {
     "method.response.header.Content-Type"                 = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Origin"  = false
   }
 }
 
@@ -121,7 +122,7 @@ resource "aws_api_gateway_integration_response" "get" {
   status_code = aws_api_gateway_method_response.get.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -133,8 +134,7 @@ resource "aws_api_gateway_method" "options" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
   http_method   = "OPTIONS"
-  authorization = local.authorization_type
-  authorizer_id = aws_api_gateway_authorizer.main.id
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "options" {

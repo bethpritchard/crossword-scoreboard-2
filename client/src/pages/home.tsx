@@ -14,8 +14,12 @@ const Home = () => {
   }
 
   const [scores, setScores] = useState(InitialScore);
+  const [error, setError] = useState('');
 
-  const handleScoreChange = (playerName: PlayerName, newScore: number) => {
+  const handleScoreChange = async (
+    playerName: PlayerName,
+    newScore: number,
+  ) => {
     if (newScore < 0 && scores[playerName] === 0) {
       return;
     }
@@ -25,20 +29,32 @@ const Home = () => {
       [playerName]: newScore,
     }));
 
-    updateScore(playerName, newScore);
+    try {
+      const token = await auth.getAuthToken();
+      await updateScore(token, playerName, newScore);
+    } catch (error) {
+      setError('Error updating score. Please try again.');
+    }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     setScores(InitialScore);
+    const token = await auth.getAuthToken();
     for (const playerName in InitialScore) {
-      updateScore(playerName as PlayerName, 0);
+      updateScore(token, playerName as PlayerName, 0);
     }
   };
 
   useEffect(() => {
     const fetchScores = async () => {
-      const scoreData = await getScores();
-      setScores(scoreData);
+      const token = await auth.getAuthToken();
+      try {
+        const scoreData = await getScores(token);
+        setScores(scoreData);
+      } catch (error) {
+        console.error('Error fetching scores:', error);
+        setError('Error fetching scores. Please try again.');
+      }
     };
     fetchScores();
   }, []);
@@ -60,6 +76,7 @@ const Home = () => {
           updateScore={handleScoreChange}
         />
       </div>
+      {error && <p>{error}</p>}
       <div className="flex justify-center mt-4 md:mt-8 mb-4">
         <button onClick={handleReset}>Reset</button>
       </div>
