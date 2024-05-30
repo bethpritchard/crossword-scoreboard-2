@@ -39,16 +39,20 @@ const Home = () => {
 
   const handleReset = async () => {
     setScores(InitialScore);
-    const token = await auth.getAuthToken();
-    for (const playerName in InitialScore) {
-      updateScore(token, playerName as PlayerName, 0);
+    try {
+      const token = await auth.getAuthToken();
+      for (const playerName in InitialScore) {
+        updateScore(token, playerName as PlayerName, 0);
+      }
+    } catch (error) {
+      setError('Error resetting scores. Please try again.');
     }
   };
 
   useEffect(() => {
     const fetchScores = async () => {
-      const token = await auth.getAuthToken();
       try {
+        const token = await auth.getAuthToken();
         const scoreData = await getScores(token);
         setScores(scoreData);
       } catch (error) {
