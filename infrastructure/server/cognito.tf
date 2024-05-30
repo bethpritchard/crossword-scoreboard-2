@@ -8,6 +8,11 @@ resource "aws_cognito_user_pool" "main" {
 resource "aws_cognito_user_pool_client" "main" {
   name         = "${local.project}-user-pool-client"
   user_pool_id = aws_cognito_user_pool.main.id
+  token_validity_units {
+    access_token  = "minutes"
+    id_token      = "minutes"
+    refresh_token = "days"
+  }
 }
 
 resource "aws_cognito_identity_pool" "main" {

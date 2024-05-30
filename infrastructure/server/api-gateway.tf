@@ -1,3 +1,5 @@
+
+
 resource "aws_api_gateway_rest_api" "main" {
   name        = "scoreboard-rest-api"
   description = "API Gateway"
@@ -12,13 +14,25 @@ resource "aws_api_gateway_resource" "db" {
   path_part   = "db"
 }
 
+locals {
+  authorization_type = "COGNITO_USER_POOLS"
+}
+
+resource "aws_api_gateway_authorizer" "main" {
+  name          = "CognitoUserPoolAuthorizer"
+  type          = local.authorization_type
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  provider_arns = [aws_cognito_user_pool.main.arn]
+}
+
 // POST method
 
 resource "aws_api_gateway_method" "post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = local.authorization_type
+  authorizer_id = aws_api_gateway_authorizer.main.id
 
   request_parameters = {
     "method.request.header.Content-Type" = true
@@ -44,7 +58,7 @@ resource "aws_api_gateway_method_response" "post" {
     "method.response.header.Content-Type"                 = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Origin"  = false
   }
 }
 
@@ -56,7 +70,7 @@ resource "aws_api_gateway_integration_response" "post" {
   status_code = aws_api_gateway_method_response.post.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -68,10 +82,12 @@ resource "aws_api_gateway_method" "get" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.db.id
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = local.authorization_type
+  authorizer_id = aws_api_gateway_authorizer.main.id
 
   request_parameters = {
-    "method.request.header.Content-Type" = true
+    "method.request.header.Content-Type"  = true
+    "method.request.header.Authorization" = true
   }
 }
 
@@ -94,7 +110,7 @@ resource "aws_api_gateway_method_response" "get" {
     "method.response.header.Content-Type"                 = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Origin"  = false
   }
 }
 
@@ -106,7 +122,7 @@ resource "aws_api_gateway_integration_response" "get" {
   status_code = aws_api_gateway_method_response.get.status_code
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
@@ -167,5 +183,25 @@ resource "aws_api_gateway_deployment" "db" {
     redeployment = sha1(jsonencode(aws_api_gateway_rest_api.main.body))
   }
   rest_api_id = aws_api_gateway_rest_api.main.id
-  stage_name  = "v1"
+}
+
+resource "aws_api_gateway_stage" "main" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  stage_name    = "v2"
+  deployment_id = aws_api_gateway_deployment.db.id
+  description   = "v2"
+}
+
+resource "aws_api_gateway_usage_plan" "main" {
+  name = "${local.project}-usage-plan"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.main.id
+    stage  = aws_api_gateway_stage.main.stage_name
+  }
+
+  quota_settings {
+    limit  = 1000
+    period = "DAY"
+  }
 }
