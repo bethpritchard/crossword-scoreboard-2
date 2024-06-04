@@ -1,5 +1,5 @@
-import { API_URL } from '@/api/constants';
 import axios from 'axios';
+import { API_URL } from '@/api/constants';
 
 export const getScores = async (authToken: string) => {
   const HEADERS = {
