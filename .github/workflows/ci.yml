@@ -4,18 +4,19 @@ on:
   push:
     branches:
       - main
+  workflow_call:
 
   # pull_request:
   #   types:
   #     - opened
   #     - synchronize
 
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-        description: "The environment to deploy to"
+  # workflow_call:
+  # inputs:
+  #   environment:
+  #     required: true
+  #     type: string
+  #     description: "The environment to deploy to"
 
 jobs:
   inspect-changes:
@@ -47,42 +48,11 @@ jobs:
             is-lambda:
               - 'lambdas/**'
 
-  build-and-test-frontend:
-    name: Build and Test Frontend
+  build-and-test-client:
+    name: Build and Test Client
     needs: inspect-changes
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: ./client
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Prettier
-        run: npm run prettier
-
-      - name: Build
-        run: npm run build
-
-      - name: Run tests
-        run: npm run test
-        env:
-          CI: true
-
-      - name: Upload production-ready build files
-        if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
+    uses: ./.github/workflows/build-and-test-client.yml
 
   validate-and-format-client-infra:
     name: Validate and Format Client Infrastructure

@@ -43,9 +43,15 @@ jobs:
       path: ./infrastructure/server
       environment: prod
 
+  build-and-test-client:
+    name: Build and Test Client
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-and-test-client.yml
+
   deploy-client:
     name: Deploy Client to S3
-    needs: apply-client-infra
+    needs: build-and-test-client
     secrets: inherit
     permissions:
       id-token: write

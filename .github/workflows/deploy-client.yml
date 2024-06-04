@@ -33,24 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: production-files
-          path: ./dist
+          path: ./client/dist
 
       - name: Push to S3
-        run: aws s3 cp production-files s3://${{inputs.environment}}-crossword-scoreboard-frontend/ --recursive
-
-    #     - name: Checkout
-    #         uses: actions/checkout@v4
-
-    #     - name: Setup Node.js
-    #     uses: actions/setup-node@v3
-    #     with:
-    #     node-version: 14
-
-    # - name: Install Dependencies
-    #     run: npm install
-
-    # - name: Build
-    #     run: npm run build
-
-    # - name: Push to S3
-    #     run: aws s3 sync ./dist s3://${{ secrets.S3_BUCKET_NAME }} --delete
+        run: aws s3 cp ./client/dist/production-files s3://${{inputs.environment}}-crossword-scoreboard-frontend/ --recursive
