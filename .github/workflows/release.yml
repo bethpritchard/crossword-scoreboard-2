@@ -1,0 +1,40 @@
+name: Deploy to Prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        description: "The environment to deploy to"
+        type: string
+
+  push:
+    branches:
+      - add-cd-pipeline
+
+jobs:
+  validate-and-format-client-infra:
+    name: Validate and Format Client Infrastructure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Validate and Format Client Infrastructure
+        uses: ./.github/workflows/validate-terraform.yml
+        with:
+          path: ./infrastructure/client
+
+  apply-client-infra:
+    name: Apply Client Infrastructure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    needs: validate-and-format-client-infra
+    steps:
+      - name: Apply Client Infrastructure
+        uses: ./.github/workflows/apply-terraform.yml
+        with:
+          environment: "prod"
+          path: ./infrastructure/client
