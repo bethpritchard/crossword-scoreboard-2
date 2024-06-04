@@ -39,11 +39,11 @@ jobs:
   apply:
     name: Apply Terraform
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    environment:
-      name: prod
+    defaults:
+      run:
+        working-directory: ${{inputs.path}}
+    # environment:
+    #   name: prod
     permissions:
       contents: read
       pull-requests: write
