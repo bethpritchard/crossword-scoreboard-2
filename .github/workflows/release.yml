@@ -20,6 +20,9 @@ jobs:
       path: ./infrastructure/client
 
   apply-client-infra:
+    permissions:
+      id-token: write
+      contents: read
     name: Apply Client Infrastructure
     uses: ./.github/workflows/apply-terraform.yml
     with:
