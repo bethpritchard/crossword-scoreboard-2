@@ -2,11 +2,11 @@ name: Deploy to Prod
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        required: true
-        description: "The environment to deploy to"
-        type: string
+    # inputs:
+    #   environment:
+    #     required: true
+    #     description: "The environment to deploy to"
+    #     type: string
 
   push:
     branches:
@@ -22,6 +22,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Validate and Format Client Infrastructure
         uses: ./.github/workflows/validate-terraform.yml
         with:
@@ -38,7 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: configure aws credentials
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}

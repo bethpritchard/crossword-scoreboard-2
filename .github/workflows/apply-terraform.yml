@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Apply Terraform
 
 on:
   workflow_call:
@@ -7,46 +7,19 @@ on:
         required: true
         description: "The environment to deploy to"
         type: string
-
       path:
         required: true
         description: "The path to the Terraform configuration files"
         type: string
 
 jobs:
-  # plan:
-  #   name: Plan Terraform
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     pull-requests: write
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v3
-  #       with:
-  #         terraform_version: 1.8.1
-  #         terraform_wrapper: false
-
-  #     - name: Terraform Init
-  #       run: terraform init --backend="env/backend_s3_${{inputs.environment}}.hcl"
-
-  #     - name: Terraform Plan
-  #       run: terraform plan -var-file="env/${{inputs.environment}}.tfvars"
-
-  apply:
-    name: Apply Terraform
+  apply-infrastructure:
+    name: Apply Infrastructure
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{inputs.path}}
-    # environment:
-    #   name: prod
-    permissions:
-      contents: read
-      pull-requests: write
+        working-directory: ${{ inputs.path }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,17 +31,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        run: terraform init --backend="env/backend_s3_${{inputs.environment}}.hcl"
-
-      - name: Terraform Validate
-        run: terraform validate
+        run: terraform init --backend="env/backend_s3_${{ inputs.environment }}.hcl"
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var-file="env/${{inputs.environment}}.tfvars"
-
-    #     apply:
-    # name: Apply Terraform
-    # runs-on: ubuntu-latest
-    # permissions:
-    #   contents: read
-    #   pull-requests: write
+        run: terraform apply -auto-approve
