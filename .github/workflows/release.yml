@@ -15,39 +15,13 @@ on:
 jobs:
   validate-and-format-client-infra:
     name: Validate and Format Client Infrastructure
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate and Format Client Infrastructure
-        uses: ./.github/workflows/validate-terraform.yml
-        with:
-          path: ./infrastructure/client
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      path: ./infrastructure/client
 
   apply-client-infra:
     name: Apply Client Infrastructure
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    needs: validate-and-format-client-infra
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
-          role-session-name: samplerolesession
-          aws-region: eu-west-2
-
-      - name: Apply Client Infrastructure
-        uses: ./.github/workflows/apply-terraform.yml
-        with:
-          environment: "prod"
-          path: ./infrastructure/client
+    uses: ./.github/workflows/apply-terraform.yml
+    with:
+      path: ./infrastructure/client
+      environment: prod
