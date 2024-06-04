@@ -14,6 +14,7 @@ jobs:
       path: ./infrastructure/client
 
   apply-client-infra:
+    needs: validate-and-format-client-infra
     secrets: inherit
     permissions:
       id-token: write
@@ -22,4 +23,33 @@ jobs:
     uses: ./.github/workflows/apply-terraform.yml
     with:
       path: ./infrastructure/client
+      environment: prod
+
+  validate-and-format-server-infra:
+    name: Validate and Format Server Infrastructure
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      path: ./infrastructure/server
+
+  apply-server-infra:
+    needs: validate-and-format-server-infra
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    name: Apply Server Infrastructure
+    uses: ./.github/workflows/apply-terraform.yml
+    with:
+      path: ./infrastructure/server
+      environment: prod
+
+  deploy-client:
+    name: Deploy Client to S3
+    needs: apply-client-infra
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/deploy-client.yml
+    with:
       environment: prod

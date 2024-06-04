@@ -45,4 +45,4 @@ jobs:
         run: terraform init -backend-config="env/backend_s3_${{ inputs.environment }}.hcl"
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var-file=variables/${{ inputs.environment }}.tfvars
+        run: terraform apply -auto-approve -var-file="variables/${{ inputs.environment }}.tfvars"
