@@ -20,6 +20,8 @@ jobs:
       contents: read
       pull-requests: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Validate and Format Client Infrastructure
         uses: ./.github/workflows/validate-terraform.yml
         with:
@@ -33,6 +35,8 @@ jobs:
       pull-requests: read
     needs: validate-and-format-client-infra
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Apply Client Infrastructure
         uses: ./.github/workflows/apply-terraform.yml
         with:
