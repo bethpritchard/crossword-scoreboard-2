@@ -11,6 +11,11 @@ resource "aws_lambda_function" "main" {
   runtime          = var.lambda_runtime
   filename         = data.archive_file.src.output_path
   source_code_hash = data.archive_file.src.output_base64sha256
+  environment {
+    variables = {
+      DB_TABLE_NAME = var.table_name
+    }
+  }
 }
 
 resource "aws_lambda_permission" "apigw" {

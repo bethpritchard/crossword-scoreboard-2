@@ -29,5 +29,9 @@ variable "lambda_runtime" {
 variable "api_gateway_arn" {
   description = "The arn of the api gateway"
   type        = string
+}
 
+variable "table_name" {
+  description = "The name of the dynamodb table"
+  type        = string
 }

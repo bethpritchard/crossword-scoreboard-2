@@ -18,11 +18,6 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "crossword-scoreboard-state"
-    key            = "server.tfstate"
-    region         = "eu-west-2"
-    dynamodb_table = "crossword-scoreboard-state-lock"
-    encrypt        = true
   }
 }
 

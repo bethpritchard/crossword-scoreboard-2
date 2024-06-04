@@ -1,5 +1,5 @@
 resource "aws_iam_policy" "update_score_lambda_policy" {
-  name        = "update-score-lambda-policy"
+  name        = "${local.prefix}-update-score-lambda-policy"
   description = "Policy for update score lambda"
   policy = jsonencode({
     Version = "2012-10-17",
@@ -18,7 +18,7 @@ resource "aws_iam_policy" "update_score_lambda_policy" {
 
 
 resource "aws_iam_policy" "get_score_lambda_policy" {
-  name        = "get-score-lambda-policy"
+  name        = "${local.prefix}-get-score-lambda-policy"
   description = "Policy for update score lambda"
   policy = jsonencode({
     Version = "2012-10-17",

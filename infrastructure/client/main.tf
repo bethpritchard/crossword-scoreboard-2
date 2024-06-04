@@ -4,7 +4,7 @@ provider "aws" {
     tags = {
       project     = "crossword-scoreboard"
       app         = "frontend"
-      environment = "dev"
+      environment = "${var.environment}"
     }
   }
 }
@@ -18,11 +18,6 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "crossword-scoreboard-state"
-    key            = "client.tfstate"
-    region         = "eu-west-2"
-    dynamodb_table = "crossword-scoreboard-state-lock"
-    encrypt        = true
   }
 }
 

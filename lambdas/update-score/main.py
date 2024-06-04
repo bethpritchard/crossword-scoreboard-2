@@ -1,10 +1,12 @@
 import boto3
+import os
 
 dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table("crossword-scoreboard-db")
 
 
 def lambda_handler(event, context):
+    table_name = os.environ["DB_TABLE_NAME"]
+    table = dynamodb.Table(table_name)
     try:
         table.update_item(
             Key={"name": event["playerName"]},
