@@ -20,6 +20,7 @@ jobs:
       path: ./infrastructure/client
 
   apply-client-infra:
+    secrets: inherit
     permissions:
       id-token: write
       contents: read

@@ -31,7 +31,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::737919189452:role/github-oidc
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
           aws-region: eu-west-2
           audience: sts.amazonaws.com
 
@@ -42,7 +42,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        run: terraform init --backend="env/backend_s3_${{ inputs.environment }}.hcl"
+        run: terraform init -backend-config="env/backend_s3_${{ inputs.environment }}.hcl"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
