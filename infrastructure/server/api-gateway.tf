@@ -1,7 +1,7 @@
 
 
 resource "aws_api_gateway_rest_api" "main" {
-  name        = "scoreboard-rest-api"
+  name        = "${local.prefix}-rest-api"
   description = "API Gateway"
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -19,7 +19,7 @@ locals {
 }
 
 resource "aws_api_gateway_authorizer" "main" {
-  name          = "CognitoUserPoolAuthorizer"
+  name          = "${local.prefix}-cognito-user-pool-authorizer"
   type          = local.authorization_type
   rest_api_id   = aws_api_gateway_rest_api.main.id
   provider_arns = [aws_cognito_user_pool.main.arn]
@@ -154,9 +154,9 @@ resource "aws_api_gateway_method_response" "options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = false
+    "method.response.header.Access-Control-Allow-Methods" = false
+    "method.response.header.Access-Control-Allow-Origin"  = false
   }
 }
 
@@ -187,13 +187,12 @@ resource "aws_api_gateway_deployment" "db" {
 
 resource "aws_api_gateway_stage" "main" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
-  stage_name    = "v2"
+  stage_name    = var.environment
   deployment_id = aws_api_gateway_deployment.db.id
-  description   = "v2"
 }
 
 resource "aws_api_gateway_usage_plan" "main" {
-  name = "${local.project}-usage-plan"
+  name = "${local.prefix}-usage-plan"
 
   api_stages {
     api_id = aws_api_gateway_rest_api.main.id
