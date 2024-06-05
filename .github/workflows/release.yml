@@ -51,7 +51,7 @@ jobs:
 
   deploy-client:
     name: Deploy Client to S3
-    needs: build-and-test-client
+    needs: [build-and-test-client, apply-client-infra]
     secrets: inherit
     permissions:
       id-token: write
