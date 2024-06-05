@@ -4,19 +4,10 @@ on:
   push:
     branches:
       - main
-  workflow_call:
-
-  # pull_request:
-  #   types:
-  #     - opened
-  #     - synchronize
-
-  # workflow_call:
-  # inputs:
-  #   environment:
-  #     required: true
-  #     type: string
-  #     description: "The environment to deploy to"
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   inspect-changes:
