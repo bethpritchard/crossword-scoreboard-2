@@ -9,6 +9,8 @@ resource "aws_cloudfront_distribution" "main" {
     origin_access_control_id = aws_cloudfront_origin_access_control.main.id
   }
 
+  aliases = [var.environment == "prod" ? var.domain_name : "${var.environment}-${var.domain_name}"]
+
   default_cache_behavior {
     min_ttl                = 0
     default_ttl            = 0
@@ -35,7 +37,8 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = data.aws_acm_certificate.main.arn
+    ssl_support_method = "sni-only"
   }
 }
 
