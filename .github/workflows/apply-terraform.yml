@@ -11,10 +11,20 @@ on:
         required: true
         description: "The environment to deploy to"
         type: string
-      path:
+      directory:
         required: true
-        description: "The path to the Terraform configuration files"
+        description: "The directory of the Terraform files to apply"
         type: string
+    outputs:
+      api_gateway_url:
+        value: ${{jobs.apply-infrastructure.outputs.api_gateway_url}}
+        description: "The API Gateway URL"
+      cognito_user_pool_id:
+        value: ${{jobs.apply-infrastructure.outputs.cognito_user_pool_id}}
+        description: "The Cognito User Pool ID"
+      cognito_user_pool_client_id:
+        value: ${{jobs.apply-infrastructure.outputs.cognito_user_pool_client_id}}
+        description: "The Cognito User Pool Client ID"
 
 jobs:
   apply-infrastructure:
@@ -22,7 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ inputs.path }}
+        working-directory: "./infrastructure/${{ inputs.directory }}"
+
+    outputs:
+      api_gateway_url: ${{ steps.get_output.outputs.api_gateway_url }}
+      cognito_user_pool_id: ${{ steps.get_output.outputs.cognito_user_pool_id }}
+      cognito_user_pool_client_id: ${{ steps.get_output.outputs.cognito_user_pool_client_id }}
 
     steps:
       - name: Checkout
@@ -46,3 +61,19 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var-file="variables/${{ inputs.environment }}.tfvars"
+
+      - name: Get Terraform Outputs
+        id: get_output
+        run: |
+          if terraform output -json | jq -e .api_gateway_url > /dev/null; then
+            echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+            echo "api_gateway_url=$(terraform output -raw api_gateway_url)"
+          fi
+          if terraform output -json | jq -e .cognito_user_pool_id > /dev/null; then
+            echo "cognito_user_pool_id=$(terraform output -raw cognito_user_pool_id)" >> $GITHUB_OUTPUT
+            echo "cognito_user_pool_id=$(terraform output -raw cognito_user_pool_id)"
+          fi
+          if terraform output -json | jq -e .cognito_user_pool_client_id > /dev/null; then
+            echo "cognito_user_pool_client_id=$(terraform output -raw cognito_user_pool_client_id)" >> $GITHUB_OUTPUT
+            echo "cognito_user_pool_client_id=$(terraform output -raw cognito_user_pool_client_id)"
+          fi

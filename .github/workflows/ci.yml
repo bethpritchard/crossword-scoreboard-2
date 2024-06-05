@@ -60,7 +60,7 @@ jobs:
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client-infra == 'true'
     uses: ./.github/workflows/validate-terraform.yml
     with:
-      path: ./infrastructure/client
+      directory: client
 
   validate-and-format-server-infra:
     name: Validate and Format Server Infrastructure
@@ -68,7 +68,7 @@ jobs:
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-server-infra == 'true'
     uses: ./.github/workflows/validate-terraform.yml
     with:
-      path: ./infrastructure/server
+      directory: server
 
   validate-and-format-lambdas:
     name: Validate and Format Lambdas
