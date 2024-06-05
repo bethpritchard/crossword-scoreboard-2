@@ -1,0 +1,64 @@
+name: Deploy to Prod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-and-format-client-infra:
+    name: Validate and Format Client Infrastructure
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      directory: client
+
+  apply-client-infra:
+    needs: validate-and-format-client-infra
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    name: Apply Client Infrastructure
+    uses: ./.github/workflows/apply-terraform.yml
+    with:
+      directory: client
+      environment: prod
+
+  validate-and-format-server-infra:
+    name: Validate and Format Server Infrastructure
+    uses: ./.github/workflows/validate-terraform.yml
+    with:
+      directory: server
+
+  apply-server-infra:
+    needs: validate-and-format-server-infra
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    name: Apply Server Infrastructure
+    uses: ./.github/workflows/apply-terraform.yml
+    with:
+      directory: server
+      environment: prod
+
+  build-and-test-client:
+    name: Build and Test Client
+    needs: [apply-server-infra]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-and-test-client.yml
+    with:
+      environment: prod
+      api_gateway_url: ${{ needs.apply-server-infra.outputs.api_gateway_url }}
+      cognito_user_pool_id: ${{ needs.apply-server-infra.outputs.cognito_user_pool_id }}
+      cognito_user_pool_client_id: ${{ needs.apply-server-infra.outputs.cognito_user_pool_client_id }}
+
+  deploy-client:
+    name: Deploy Client to S3
+    needs: [build-and-test-client, apply-client-infra, apply-server-infra]
+    secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/deploy-client.yml
+    with:
+      environment: prod

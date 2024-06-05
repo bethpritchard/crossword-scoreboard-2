@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     types:
       - opened
@@ -40,48 +39,11 @@ jobs:
             is-lambda:
               - 'lambdas/**'
 
-  build-and-test-frontend:
-    name: Build and Test Frontend
+  build-and-test-client:
+    name: Build and Test Client
     needs: inspect-changes
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: ./client
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.1.x"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Prettier
-        run: npm run prettier
-
-      - name: Build
-        run: npm run build
-
-      - name: Run tests
-        run: npm run test
-        env:
-          CI: true
-
-      - name: Upload production-ready build files
-        if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-files
-          path: ./client/dist
+    uses: ./.github/workflows/build-and-test-client.yml
 
   validate-and-format-client-infra:
     name: Validate and Format Client Infrastructure
@@ -89,7 +51,7 @@ jobs:
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-client-infra == 'true'
     uses: ./.github/workflows/validate-terraform.yml
     with:
-      path: ./infrastructure/client
+      directory: client
 
   validate-and-format-server-infra:
     name: Validate and Format Server Infrastructure
@@ -97,7 +59,7 @@ jobs:
     if: github.event_name == 'push' || needs.inspect-changes.outputs.is-server-infra == 'true'
     uses: ./.github/workflows/validate-terraform.yml
     with:
-      path: ./infrastructure/server
+      directory: server
 
   validate-and-format-lambdas:
     name: Validate and Format Lambdas

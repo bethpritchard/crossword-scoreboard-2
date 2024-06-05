@@ -1,0 +1,79 @@
+name: Apply Terraform
+
+permissions:
+  contents: read
+  id-token: write
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        description: "The environment to deploy to"
+        type: string
+      directory:
+        required: true
+        description: "The directory of the Terraform files to apply"
+        type: string
+    outputs:
+      api_gateway_url:
+        value: ${{jobs.apply-infrastructure.outputs.api_gateway_url}}
+        description: "The API Gateway URL"
+      cognito_user_pool_id:
+        value: ${{jobs.apply-infrastructure.outputs.cognito_user_pool_id}}
+        description: "The Cognito User Pool ID"
+      cognito_user_pool_client_id:
+        value: ${{jobs.apply-infrastructure.outputs.cognito_user_pool_client_id}}
+        description: "The Cognito User Pool Client ID"
+
+jobs:
+  apply-infrastructure:
+    name: Apply Infrastructure
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./infrastructure/${{ inputs.directory }}"
+
+    outputs:
+      api_gateway_url: ${{ steps.get_output.outputs.api_gateway_url }}
+      cognito_user_pool_id: ${{ steps.get_output.outputs.cognito_user_pool_id }}
+      cognito_user_pool_client_id: ${{ steps.get_output.outputs.cognito_user_pool_client_id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+          aws-region: eu-west-2
+          audience: sts.amazonaws.com
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.1
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init -backend-config="env/backend_s3_${{ inputs.environment }}.hcl"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var-file="variables/${{ inputs.environment }}.tfvars"
+
+      - name: Get Terraform Outputs
+        id: get_output
+        run: |
+          if terraform output -json | jq -e .api_gateway_url > /dev/null; then
+            echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+            echo "api_gateway_url=$(terraform output -raw api_gateway_url)"
+          fi
+          if terraform output -json | jq -e .cognito_user_pool_id > /dev/null; then
+            echo "cognito_user_pool_id=$(terraform output -raw cognito_user_pool_id)" >> $GITHUB_OUTPUT
+            echo "cognito_user_pool_id=$(terraform output -raw cognito_user_pool_id)"
+          fi
+          if terraform output -json | jq -e .cognito_user_pool_client_id > /dev/null; then
+            echo "cognito_user_pool_client_id=$(terraform output -raw cognito_user_pool_client_id)" >> $GITHUB_OUTPUT
+            echo "cognito_user_pool_client_id=$(terraform output -raw cognito_user_pool_client_id)"
+          fi
