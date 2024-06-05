@@ -33,4 +33,4 @@ jobs:
           path: ./dist
 
       - name: Push to S3
-        run: aws s3 cp ./dist s3://${{inputs.environment}}-crossword-scoreboard-frontend/ --recursive
+        run: aws s3 sync ./dist s3://${{inputs.environment}}-crossword-scoreboard-frontend/ --delete
