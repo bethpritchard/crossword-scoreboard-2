@@ -1,4 +1,4 @@
-name: Deploy to Environment
+name: CD
 
 on:
   workflow_dispatch:
