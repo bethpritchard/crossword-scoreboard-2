@@ -1,4 +1,4 @@
-name: Deploy to Prod
+name: Deploy to Environment
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       environment:
         required: true
         type: string
-        description: "The environment to deploy to"
+        description: "Environment to deploy to (dev, prod)"
 
 jobs:
   validate-and-format-client-infra:
