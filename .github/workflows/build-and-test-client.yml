@@ -19,7 +19,6 @@ on:
         required: false
         type: string
         description: "The environment to deploy to"
-        default: "dev"
 
 jobs:
   build-and-test-frontend:
@@ -35,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set environment variables
-        if: inputs.environment == 'prod'
+        if: inputs.environment == 'prod' || inputs.environment == 'dev'
         run: |
           echo "VITE_API_URL=${{ inputs.api_gateway_url }}" >> .env &&
           echo "VITE_USER_POOL_ID=${{ inputs.cognito_user_pool_id }}" >> .env &&
@@ -59,7 +58,7 @@ jobs:
           CI: true
 
       - name: Upload production-ready build files
-        if: inputs.environment == 'prod'
+        if: inputs.environment == 'prod' || inputs.environment == 'dev'
         uses: actions/upload-artifact@v4
         with:
           name: dist
