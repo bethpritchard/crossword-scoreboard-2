@@ -10,7 +10,7 @@ resource "aws_iam_policy" "update_score_lambda_policy" {
           "dynamodb:PutItem",
           "dynamodb:UpdateItem"
         ],
-        Resource = aws_dynamodb_table.main.arn
+        Resource = aws_dynamodb_table.scores.arn
       }
     ]
   })
@@ -30,7 +30,7 @@ resource "aws_iam_policy" "get_score_lambda_policy" {
           "dynamodb:Scan",
           "dynamodb:BatchGetItem"
         ],
-        Resource = aws_dynamodb_table.main.arn
+        Resource = aws_dynamodb_table.scores.arn
       }
     ]
   })
