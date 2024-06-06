@@ -59,7 +59,7 @@ jobs:
           CI: true
 
       - name: Upload production-ready build files
-        if: github.ref == 'refs/heads/add-cd-pipeline'
+        if: inputs.environment == 'prod'
         uses: actions/upload-artifact@v4
         with:
           name: dist
