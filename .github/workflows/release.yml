@@ -2,6 +2,11 @@ name: Deploy to Prod
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: "The environment to deploy to"
 
 jobs:
   validate-and-format-client-infra:
@@ -20,7 +25,7 @@ jobs:
     uses: ./.github/workflows/apply-terraform.yml
     with:
       directory: client
-      environment: prod
+      environment: ${{inputs.environment}}
 
   validate-and-format-server-infra:
     name: Validate and Format Server Infrastructure
@@ -38,7 +43,7 @@ jobs:
     uses: ./.github/workflows/apply-terraform.yml
     with:
       directory: server
-      environment: prod
+      environment: ${{inputs.environment}}
 
   build-and-test-client:
     name: Build and Test Client
@@ -47,7 +52,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/build-and-test-client.yml
     with:
-      environment: prod
+      environment: ${{inputs.environment}}
       api_gateway_url: ${{ needs.apply-server-infra.outputs.api_gateway_url }}
       cognito_user_pool_id: ${{ needs.apply-server-infra.outputs.cognito_user_pool_id }}
       cognito_user_pool_client_id: ${{ needs.apply-server-infra.outputs.cognito_user_pool_client_id }}
@@ -61,4 +66,4 @@ jobs:
       contents: read
     uses: ./.github/workflows/deploy-client.yml
     with:
-      environment: prod
+      environment: ${{inputs.environment}}
