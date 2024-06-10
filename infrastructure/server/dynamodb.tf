@@ -7,6 +7,9 @@ resource "aws_dynamodb_table" "scores" {
     type = "S"
   }
 
+  stream_enabled   = true
+  stream_view_type = "NEW_IMAGES"
+
 }
 
 resource "aws_dynamodb_table" "websockets" {
