@@ -29,6 +29,19 @@ resource "aws_apigatewayv2_route" "disconnect_route" {
   target    = "integrations/${aws_apigatewayv2_integration.disconnect_websockets_lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_integration" "send_message_websockets_lambda_integration" {
+  api_id             = aws_apigatewayv2_api.websockets.id
+  integration_type   = "AWS_PROXY"
+  integration_method = "POST"
+  integration_uri    = module.stream_scores_lambda.invoke_arn
+}
+
+resource "aws_apigatewayv2_route" "send_message_route" {
+  api_id    = aws_apigatewayv2_api.websockets.id
+  route_key = "sendmessage"
+  target    = "integrations/${aws_apigatewayv2_integration.send_message_websockets_lambda_integration.id}"
+}
+
 resource "aws_apigatewayv2_stage" "websockets" {
   depends_on  = [aws_apigatewayv2_route.connect_route, aws_apigatewayv2_route.disconnect_route]
   api_id      = aws_apigatewayv2_api.websockets.id

@@ -8,7 +8,7 @@ resource "aws_dynamodb_table" "scores" {
   }
 
   stream_enabled   = true
-  stream_view_type = "NEW_IMAGES"
+  stream_view_type = "NEW_IMAGE"
 
 }
 

@@ -69,3 +69,28 @@ resource "aws_iam_policy" "disconnect_websockets_lambda_policy" {
     ]
   })
 }
+
+resource "aws_iam_policy" "stream_scores_lambda_policy" {
+  name        = "${local.prefix}-stream-scores-websockets-lambda-policy"
+  description = "Policy for send message websockets lambda"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:BatchGetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem"
+        ],
+        Resource = [
+          aws_dynamodb_table.scores.arn,
+          aws_dynamodb_table.websockets.arn
+        ]
+      }
+    ]
+  })
+}

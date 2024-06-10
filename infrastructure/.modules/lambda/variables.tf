@@ -31,7 +31,8 @@ variable "api_gateway_arn" {
   type        = string
 }
 
-variable "table_name" {
-  description = "The name of the dynamodb table"
-  type        = string
+variable "env_vars" {
+  description = "The environment variables to set for the lambda function"
+  type        = map(string)
+  default     = {}
 }
