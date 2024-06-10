@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import NameCard from '@/components/nameCard/nameCard';
-import { getScores } from '@/api/getScores';
-import { updateScore } from '@/api/updateScore';
 import { InitialScore, CHLOE_KEY, BETH_KEY } from '@/constants';
 import { PlayerName } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,6 +13,37 @@ const Home = () => {
 
   const [scores, setScores] = useState(InitialScore);
   const [error, setError] = useState('');
+  const [ws, setWs] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    const ws = new WebSocket(
+      'wss://9zhq00y7se.execute-api.eu-west-2.amazonaws.com/dev',
+    );
+
+    ws.onopen = () => {
+      console.log('Connected to WebSocket');
+    };
+
+    ws.onmessage = (messageEvent) => {
+      const data = JSON.parse(messageEvent.data);
+      if (data.action === 'scoreUpdate') {
+        setScores((prevScore) => ({
+          ...prevScore,
+          [data.playerName]: data.score,
+        }));
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('Disconnected from WebSocket');
+    };
+
+    setWs(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const handleScoreChange = async (
     playerName: PlayerName,
@@ -30,8 +59,16 @@ const Home = () => {
     }));
 
     try {
-      const token = await auth.getAuthToken();
-      await updateScore(token, playerName, newScore);
+      if (ws) {
+        ws.send(
+          JSON.stringify({
+            action: 'sendmessage',
+            playerName,
+            score: newScore,
+          }),
+        );
+      }
+      console.log('Sent score update:', playerName, newScore);
     } catch (error) {
       setError('Error updating score. Please try again.');
     }
@@ -40,28 +77,14 @@ const Home = () => {
   const handleReset = async () => {
     setScores(InitialScore);
     try {
-      const token = await auth.getAuthToken();
-      for (const playerName in InitialScore) {
-        updateScore(token, playerName as PlayerName, 0);
-      }
+      // const token = await auth.getAuthToken();
+      // for (const playerName in InitialScore) {
+      //   updateScore(token, playerName as PlayerName, 0);
+      // }
     } catch (error) {
       setError('Error resetting scores. Please try again.');
     }
   };
-
-  useEffect(() => {
-    const fetchScores = async () => {
-      try {
-        const token = await auth.getAuthToken();
-        const scoreData = await getScores(token);
-        setScores(scoreData);
-      } catch (error) {
-        console.error('Error fetching scores:', error);
-        setError('Error fetching scores. Please try again.');
-      }
-    };
-    fetchScores();
-  }, []);
 
   return (
     <div className="h-full flex flex-col justify-evenly items-center p-4">

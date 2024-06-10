@@ -90,7 +90,17 @@ resource "aws_iam_policy" "stream_scores_lambda_policy" {
           aws_dynamodb_table.scores.arn,
           aws_dynamodb_table.websockets.arn
         ]
-      }
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "execute-api:ManageConnections",
+          "execute-api:SendMessage",
+          "execute-api:PostToConnection"
+        ],
+        Resource = [
+        "${aws_apigatewayv2_api.websockets.execution_arn}/dev/POST/@connections/*", ]
+      },
     ]
   })
 }

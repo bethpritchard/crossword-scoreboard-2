@@ -5,7 +5,7 @@ module "get_score_lambda" {
   api_gateway_arn       = aws_api_gateway_rest_api.main.execution_arn
   lambda_iam_policy_arn = aws_iam_policy.get_score_lambda_policy.arn
   env_vars = {
-    TABLE_NAME = aws_dynamodb_table.websockets.name
+    DB_TABLE_NAME = aws_dynamodb_table.websockets.name
   }
 }
 
@@ -16,7 +16,7 @@ module "update_score_lambda" {
   api_gateway_arn       = aws_api_gateway_rest_api.main.execution_arn
   lambda_iam_policy_arn = aws_iam_policy.update_score_lambda_policy.arn
   env_vars = {
-    TABLE_NAME = aws_dynamodb_table.websockets.name
+    DB_TABLE_NAME = aws_dynamodb_table.websockets.name
   }
 }
 
@@ -27,7 +27,7 @@ module "connect_websockets_lambda" {
   api_gateway_arn       = aws_apigatewayv2_api.websockets.execution_arn
   lambda_iam_policy_arn = aws_iam_policy.connect_websockets_lambda_policy.arn
   env_vars = {
-    TABLE_NAME = aws_dynamodb_table.websockets.name
+    DB_TABLE_NAME = aws_dynamodb_table.websockets.name
   }
 }
 
@@ -38,7 +38,7 @@ module "disconnect_websockets_lambda" {
   api_gateway_arn       = aws_apigatewayv2_api.websockets.execution_arn
   lambda_iam_policy_arn = aws_iam_policy.disconnect_websockets_lambda_policy.arn
   env_vars = {
-    TABLE_NAME = aws_dynamodb_table.websockets.name
+    DB_TABLE_NAME = aws_dynamodb_table.websockets.name
   }
 }
 
