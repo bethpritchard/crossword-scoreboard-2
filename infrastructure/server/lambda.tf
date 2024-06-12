@@ -56,3 +56,15 @@ module "stream_scores_lambda" {
     WEBSOCKET_API_STAGE   = aws_apigatewayv2_stage.websockets.name
   }
 }
+
+module "authorizer_lambda" {
+  source                = "../.modules/lambda"
+  lambda_name           = "${local.prefix}-authorizer-lambda"
+  lambda_source_path    = "${local.lambda_source_path}/authorizer"
+  api_gateway_arn       = aws_apigatewayv2_api.websockets.execution_arn
+  lambda_iam_policy_arn = aws_iam_policy.authorizer_lambda_policy.arn
+  # env_vars = {
+  #   JWT_SECRET = var.jwt_secret
+  # }
+
+}

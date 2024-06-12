@@ -104,3 +104,20 @@ resource "aws_iam_policy" "stream_scores_lambda_policy" {
     ]
   })
 }
+
+resource "aws_iam_policy" "authorizer_lambda_policy" {
+  name        = "${local.prefix}-authorizer-lambda-policy"
+  description = "Policy for authorizer"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "execute-api:Invoke"
+        ],
+        Resource = aws_api_gateway_rest_api.main.execution_arn
+      }
+    ]
+  })
+}

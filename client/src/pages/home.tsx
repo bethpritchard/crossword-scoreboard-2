@@ -15,9 +15,11 @@ const Home = () => {
   const [error, setError] = useState('');
   const [ws, setWs] = useState<WebSocket | null>(null);
 
-  useEffect(() => {
+  const initaliseWebSocket = async () => {
+    const token = await auth.getAuthToken();
+
     const ws = new WebSocket(
-      'wss://9zhq00y7se.execute-api.eu-west-2.amazonaws.com/dev',
+      `wss://9zhq00y7se.execute-api.eu-west-2.amazonaws.com/dev?Auth=${token}`,
     );
 
     ws.onopen = () => {
@@ -43,6 +45,10 @@ const Home = () => {
     return () => {
       ws.close();
     };
+  };
+
+  useEffect(() => {
+    initaliseWebSocket();
   }, []);
 
   const handleScoreChange = async (

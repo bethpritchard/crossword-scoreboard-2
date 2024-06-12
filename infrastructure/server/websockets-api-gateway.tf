@@ -4,16 +4,26 @@ resource "aws_apigatewayv2_api" "websockets" {
   route_selection_expression = "$request.body.action"
 }
 
+resource "aws_apigatewayv2_authorizer" "main" {
+  api_id           = aws_apigatewayv2_api.websockets.id
+  authorizer_type  = "REQUEST"
+  identity_sources = ["route.request.querystring.Auth"]
+  name             = "${local.prefix}-cognito-user-pool-authorizer"
+  authorizer_uri   = module.authorizer_lambda.invoke_arn
+}
 resource "aws_apigatewayv2_integration" "connect_websockets_lambda_integration" {
   api_id             = aws_apigatewayv2_api.websockets.id
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
   integration_uri    = module.connect_websockets_lambda.invoke_arn
 }
+
 resource "aws_apigatewayv2_route" "connect_route" {
-  api_id    = aws_apigatewayv2_api.websockets.id
-  route_key = "$connect"
-  target    = "integrations/${aws_apigatewayv2_integration.connect_websockets_lambda_integration.id}"
+  api_id             = aws_apigatewayv2_api.websockets.id
+  route_key          = "$connect"
+  target             = "integrations/${aws_apigatewayv2_integration.connect_websockets_lambda_integration.id}"
+  authorization_type = "CUSTOM"
+  authorizer_id      = aws_apigatewayv2_authorizer.main.id
 }
 
 resource "aws_apigatewayv2_integration" "disconnect_websockets_lambda_integration" {
@@ -43,7 +53,7 @@ resource "aws_apigatewayv2_route" "send_message_route" {
 }
 
 resource "aws_apigatewayv2_stage" "websockets" {
-  depends_on  = [aws_apigatewayv2_route.connect_route, aws_apigatewayv2_route.disconnect_route]
+  depends_on  = [aws_apigatewayv2_route.connect_route, aws_apigatewayv2_route.connect_route]
   api_id      = aws_apigatewayv2_api.websockets.id
   name        = "dev"
   auto_deploy = true
@@ -68,7 +78,6 @@ resource "aws_apigatewayv2_stage" "websockets" {
     throttling_rate_limit  = 500
   }
 }
-
 
 resource "aws_cloudwatch_log_group" "api_gw" {
   name = "/aws/apigateway/${local.prefix}-websockets"
