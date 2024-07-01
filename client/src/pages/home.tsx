@@ -19,7 +19,7 @@ const Home = () => {
     const token = await auth.getAuthToken();
 
     const ws = new WebSocket(
-      `wss://9zhq00y7se.execute-api.eu-west-2.amazonaws.com/dev?Auth=${token}`,
+      `wss://9zhq00y7se.execute-api.eu-west-2.amazonaws.com?Auth=${token}`,
     );
 
     ws.onopen = () => {

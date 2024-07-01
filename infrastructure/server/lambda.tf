@@ -63,8 +63,9 @@ module "authorizer_lambda" {
   lambda_source_path    = "${local.lambda_source_path}/authorizer"
   api_gateway_arn       = aws_apigatewayv2_api.websockets.execution_arn
   lambda_iam_policy_arn = aws_iam_policy.authorizer_lambda_policy.arn
-  # env_vars = {
-  #   JWT_SECRET = var.jwt_secret
-  # }
-
+  env_vars = {
+    USER_POOL_ID = aws_cognito_user_pool.main.id
+    CLIENT_ID    = aws_cognito_user_pool_client.main.id
+    REGION       = var.region
+  }
 }

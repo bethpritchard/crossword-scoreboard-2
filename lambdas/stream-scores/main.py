@@ -14,7 +14,31 @@ ENDPOINT_URL = f"https://{WEBSOCKET_API_ID}.execute-api.{REGION}.amazonaws.com/{
 dynamodb = boto3.resource("dynamodb")
 api_gateway = boto3.client("apigatewaymanagementapi", endpoint_url=ENDPOINT_URL)
 
+def get_details(event):
+    body = json.loads(event["body"])
+    player_name = body["playerName"]
+    score = body["score"]
+    return player_name, score
+
+def update_score(player_name, score):
+    score_table = dynamodb.Table(SCORE_TABLE_NAME)
+    try:
+        score_table.update_item(
+            Key={"name": player_name},
+            UpdateExpression="set score = :s",
+            ExpressionAttributeValues={":s": int(score)},
+            ReturnValues="UPDATED_NEW",
+        )
+    except Exception as e:
+        print(f"Error updating score for {player_name}: {e}")
+        raise e
+
 def lambda_handler(event, context):
+    player_name, score = get_details(event)
+
+    update_score(player_name=player_name, score=score)
+
+
     try: 
         score_table = dynamodb.Table(
             SCORE_TABLE_NAME
@@ -56,6 +80,7 @@ def lambda_handler(event, context):
             except api_gateway.exceptions.GoneException:
                 connection_table.delete_item(Key={"connectionId": connection["connectionId"]})
                 print(f"Deleted stale connection {connection['connectionId']}")#
+
 
 
         return {
